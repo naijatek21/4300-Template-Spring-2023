@@ -7,8 +7,6 @@ def tokenizeWords(words):
 
 
 # query_terms is tokenized string of distinct terms for the input, and doc_terms is tokenized string of distinct terms for a document
-
-
 def jaccard (query_terms, doc_terms):
     doc_similarities = []
     for k, v in doc_terms.items():

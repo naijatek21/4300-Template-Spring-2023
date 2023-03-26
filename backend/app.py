@@ -12,7 +12,7 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = "MayankRao16Cornell.edu"
+MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "kardashiandb"
 
@@ -28,9 +28,17 @@ CORS(app)
 # but if you decide to use SQLAlchemy ORM framework, 
 # there's a much better and cleaner way to do this
 
-def sql_jaccard_search():
-    query_sql = f"""SELECT * FROM mytable WHERE LOWER( text ) LIKE '%%{query.lower()}%%'"""
-    data = mysql_engine.query_selector(query_sql)
+
+#Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
+def sql_jaccard_search(top_k_searches):
+    titles_arr = []
+    for tup in top_k_searches:
+        article_index = tup[0]
+        sql_article = f"""SELECT title FROM mytable WHERE FIELD1 = {article_index}"""
+        data = mysql_engine.query_selector(sql_article)
+        titles_arr.append(data)
+        
+    return titles_arr
 
     
 
