@@ -27,11 +27,12 @@ CORS(app)
 # Sample search, the LIKE operator in this case is hard-coded, 
 # but if you decide to use SQLAlchemy ORM framework, 
 # there's a much better and cleaner way to do this
-def sql_search(episode):
-    query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-    keys = ["id","title","descr"]
+
+def sql_jaccard_search():
+    query_sql = f"""SELECT * FROM mytable WHERE LOWER( text ) LIKE '%%{query.lower()}%%'"""
     data = mysql_engine.query_selector(query_sql)
-    return json.dumps([dict(zip(keys,i)) for i in data])
+
+    
 
 @app.route("/")
 def home():
@@ -39,7 +40,15 @@ def home():
 
 @app.route("/episodes")
 def episodes_search():
-    text = request.args.get("title")
+    text = request.args.get("text")
     return sql_search(text)
 
-# app.run(debug=True)
+app.run(debug=True)
+
+
+
+def sql_search(episode):
+    query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
+    keys = ["id","title","descr"]
+    data = mysql_engine.query_selector(query_sql)
+    return json.dumps([dict(zip(keys,i)) for i in data])
