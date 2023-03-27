@@ -1,0 +1,131 @@
+:root {
+  --lightblue: #c7d8ea;
+  --blue: #2b84dc;
+  --navy: #2a3280;
+  --gray: #434652;
+}
+
+body{
+  background-image: url("../static/images/newspaper.jpg");
+  background-color: rgba(153, 153, 210, 5%);
+  background-blend-mode: darken;
+}
+
+.full-body-container{
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.title{
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  font-size: 48px;
+  font-family: 'Impact', sans-serif;
+}
+
+.title h1{
+  margin: 0;
+  font-weight: 100;
+}
+
+#truth-title{
+  color: var(--navy);
+}
+
+#tellers-title{
+  color: var(--blue);
+}
+
+.subtitle{
+  color:var(--gray);
+  font-size: 18px;
+}
+
+.input-box{
+  border-radius: 8px;
+  border:1px solid var(--gray);
+  display: flex;
+  align-items: center;
+  margin-top: 40px;
+  padding:15px;
+  width: 500px;
+  height: 200px;
+  background-color: white;
+}
+
+.top-text{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-box textarea{
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  border: none;
+  outline: 0;
+  resize: none;
+  font-family: inherit;
+}
+
+.input-box:focus-within{
+  border:2px solid var(--blue);
+}
+
+#truth-button{
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+  height: 40px;
+  margin-top: 20px;
+  background-color: var(--blue);
+  color:white;
+  font-family: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#answer-box{
+  width: 700px;
+  margin-top:50px; 
+}
+
+.article-box {
+  background-color: white;
+  border-radius: 8px;
+  margin: 15px;
+  padding: 5px 20px 20px;
+}
+
+.article-title{
+  font-family: inherit;
+  color:var(--navy);
+}
+
+.similarity-text{
+  font-family: inherit;
+  color:var(--blue);
+}
+
+
+.matches-title {
+  color: var(--navy);
+  font-family: "Impact", sans-serif;
+  font-weight: 100;
+  display: flex;
+  justify-content: center;
+  font-size: 42px;
+  margin-top: 70px;
+}
