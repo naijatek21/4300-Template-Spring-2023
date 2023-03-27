@@ -34,8 +34,9 @@ def build_docs_dictionary():
     iterator = 0
     query_sql = f"""SELECT text FROM mytable"""
     data = mysql_engine.query_selector(query_sql)
-    for i in data: 
-        data_token = tokenizeWords(i)
+    results_as_dict = data.mappings().all()
+    for i in range(len(results_as_dict)): 
+        data_token = jd.tokenizeWords(results_as_dict[i]["text"])
         iterator+=1
         doc_dictionary[iterator] = data_token
     return doc_dictionary
@@ -47,9 +48,10 @@ def jaccard_top_titles(top_k_searches):
     for tup in top_k_searches:
         article_index = tup[0]
         score = tup[1]
-        sql_article = f"""SELECT title FROM mytable WHERE FIELD1 = {article_index}"""
+        sql_article = f"""SELECT title FROM mytable"""
         data = mysql_engine.query_selector(sql_article)
-        titles_arr.append((data, score))
+        results_as_dict = data.mappings().all()
+        titles_arr.append((results_as_dict[0]["title"], score))
         
     return titles_arr
 
@@ -72,9 +74,7 @@ def home():
 def search_jaccard():
     text = request.args.get("text")
     tokenized = jd.tokenizeWords(text)
-    print(tokenized)
     docs_dictionary = build_docs_dictionary()
-    return doc_dictionary
     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
     top_searches = jd.sort_top_k(search_similarities)
     top_titles = jaccard_top_titles(top_searches)
