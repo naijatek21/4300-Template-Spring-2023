@@ -48,11 +48,10 @@ def top_titles_scores(top_k_searches):
     sql_article = f"""SELECT title FROM mytable""" 
     data = mysql_engine.query_selector(sql_article)
     results_as_dict = data.mappings().all()
-    
     for i in range(len(top_k_searches)):
         article_index = top_k_searches[i][0]
         score = top_k_searches[i][1]
-        title_score_arr.append((results_as_dict[i]["title"], score))
+        title_score_arr.append((results_as_dict[article_index]["title"], score))
         
     return title_score_arr
 
