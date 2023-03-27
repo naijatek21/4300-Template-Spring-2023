@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import jaccard as jd
+# import cossim as cos
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -36,7 +37,7 @@ def build_docs_dictionary():
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = data.mappings().all()
     for i in range(len(results_as_dict)): 
-        data_token = jd.tokenizeWords(results_as_dict[i]["text"])
+        data_token = jd.tokenizeWords(results_as_dict[i]["text"].lower())
         iterator+=1
         doc_dictionary[iterator] = data_token
     return doc_dictionary
@@ -77,7 +78,7 @@ def home():
 @app.route("/titles")
 def search_jaccard():
     text = request.args.get("text")
-    tokenized = jd.tokenizeWords(text)
+    tokenized = jd.tokenizeWords(text.lower())
     docs_dictionary = build_docs_dictionary()
     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
     top_searches = jd.sort_top_k(search_similarities)
@@ -85,7 +86,21 @@ def search_jaccard():
     print(top_titles)
     return json_conversion(top_titles)
 
-app.run(debug=True)
+# def search_cossim():
+#     text = request.args.get("text")
+#     tokenized = cos.tokenizeWords(text.lower())
+#     docs_dictionary = build_docs_dictionary()
+#     index_titles = list(docs_dictionary.keys())
+#     print(index_titles)
+#     word_to_index = cos.word_to_index_gen(docs_dictionary.keys())
+#     query_tf = cos.tf_query(tokenized ,word_to_index)
+#     article_tf = cos.tf_articles(docs_dictionary,word_to_index)
+#     sim_scores = cos.cosine_sim(query_tf,article_tf)
+#     top_titles = sort_top_k(sim_scores,index_titles)
+#     return json_conversion(top_titles)
+
+
+#app.run(debug=True)
 
 
 # def sql_search(episode):
