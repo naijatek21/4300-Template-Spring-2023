@@ -63,7 +63,7 @@
             // { title: 'Plane Crashes Today', sim: '0.3' },
             // { title: 'Confirmed: Cornell Is Cool', sim: '0.8342' }]
 
-            fetch("/titles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
+            fetch("/titles?" + new URLSearchParams({ text: document.getElementById("filter-text-val").value }).toString())
             .then((response) => response.json()) 
             .then((data) =>
             data.forEach(row => {

@@ -41,6 +41,7 @@ def build_docs_dictionary():
     return doc_dictionary
 
 #Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
+
 def jaccard_top_titles(top_k_searches):
     titles_arr = []
     for tup in top_k_searches:
@@ -53,13 +54,6 @@ def jaccard_top_titles(top_k_searches):
     return titles_arr
 
 
-def json_conversion (top_titles):
-    keys = ["title", "sim"]
-    data = top_titles
-    return json.dumps([dict(zip(keys,i)) for i in data])
-
-
-    
 
 @app.route("/")
 def home():
@@ -78,6 +72,7 @@ def home():
 def search_jaccard():
     text = request.args.get("text")
     tokenized = jd.tokenizeWords(text)
+    print(tokenized)
     docs_dictionary = build_docs_dictionary()
     return doc_dictionary
     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
@@ -85,7 +80,7 @@ def search_jaccard():
     top_titles = jaccard_top_titles(top_searches)
     return json_conversion(top_titles)
 
-#app.run(debug=True)
+app.run(debug=True)
 
 
 # def sql_search(episode):
