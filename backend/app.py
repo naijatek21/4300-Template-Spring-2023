@@ -30,20 +30,34 @@ CORS(app)
 # there's a much better and cleaner way to do this
 
 def build_docs_dictionary():
+    doc_dictionary = {}
     iterator = 0
     query_sql = f"""SELECT text FROM mytable"""
     data = mysql_engine.query_selector(query_sql)
+    for i in data: 
+        data_token = tokenizeWords(i)
+        iterator+=1
+        doc_dictionary[iterator] = data_token
+    return doc_dictionary
 
 #Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
 def jaccard_top_titles(top_k_searches):
     titles_arr = []
     for tup in top_k_searches:
         article_index = tup[0]
+        score = tup[1]
         sql_article = f"""SELECT title FROM mytable WHERE FIELD1 = {article_index}"""
         data = mysql_engine.query_selector(sql_article)
-        titles_arr.append(data)
+        titles_arr.append((data, score))
         
     return titles_arr
+
+
+def json_conversion (top_titles):
+    keys = ["title", "sim"]
+    data = top_titles
+    return json.dumps([dict(zip(keys,i)) for i in data])
+
 
     
 
@@ -51,29 +65,32 @@ def jaccard_top_titles(top_k_searches):
 def home():
     return render_template('index.html',title="sample html")
 
-@app.route("/episodes")
-def episodes_search():
-    text = request.args.get("text")
-    return sql_search(text)
+# @app.route("/episodes")
+# def episodes_search():
+#     text = request.args.get("text")
+#     return sql_search(text)
 
-app.run(debug=True)
+
 
 
 # Implementing routing for Jaccard search here
 @app.route("/titles")
 def search_jaccard():
     text = request.args.get("text")
-    docs_dictionary = build_docs_dictionary()
     tokenized = jd.tokenizeWords(text)
+    docs_dictionary = build_docs_dictionary()
+    return doc_dictionary
     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
     top_searches = jd.sort_top_k(search_similarities)
     top_titles = jaccard_top_titles(top_searches)
-    return sql_search(text)
+    return json_conversion(top_titles)
+
+#app.run(debug=True)
 
 
-def sql_search(episode):
-    query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-    keys = ["id","title","descr"]
-    data = mysql_engine.query_selector(query_sql)
-    print(data)
-    return json.dumps([dict(zip(keys,i)) for i in data])
+# def sql_search(episode):
+#     query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
+#     keys = ["title","sim"]
+#     data = mysql_engine.query_selector(query_sql)
+#     print(data)
+#     return json.dumps([dict(zip(keys,i)) for i in data])

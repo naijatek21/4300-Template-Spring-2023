@@ -59,18 +59,18 @@
             document.getElementById("answer-box").appendChild(title1)
 
             //todo: replace mock "data" variable with data from back end
-            data = [{ title: 'White House On Fire', sim: '0.7001' },
-            { title: 'Plane Crashes Today', sim: '0.3' },
-            { title: 'Confirmed: Cornell Is Cool', sim: '0.8342' }]
+            // data = [{ title: 'White House On Fire', sim: '0.7001' },
+            // { title: 'Plane Crashes Today', sim: '0.3' },
+            // { title: 'Confirmed: Cornell Is Cool', sim: '0.8342' }]
 
-            /**fetch("/titles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
+            fetch("/titles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
             .then((response) => response.json()) 
-            .then((data) =>*/
+            .then((data) =>
             data.forEach(row => {
                 let tempDiv = document.createElement("div")
                 tempDiv.innerHTML = answerBoxTemplate(row.title, row.sim)
                 document.getElementById("answer-box").appendChild(tempDiv)
-            });
+            }));
 
             let title2 = document.createElement("div")
             title2.innerHTML = "<h1 class='matches-title'>Closest True:</h1> <p>todo</p>"
