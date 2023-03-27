@@ -54,10 +54,6 @@
             document.getElementById("answer-box").innerHTML = ""
             console.log(document.getElementById("filter-text-val").value)
 
-            //let title1 = document.createElement("div")
-            //title1.innerHTML = "<h1 class='matches-title'>Closest Matches:</h1>"
-            //document.getElementById("answer-box").appendChild(title1)
-
             fetch("/titles?" + new URLSearchParams({ text: document.getElementById("filter-text-val").value }).toString())
             .then((response) => response.json()) 
             .then((data) =>
@@ -67,13 +63,16 @@
                 document.getElementById("answer-box").appendChild(tempDiv)
             }));
 
-            //let title2 = document.createElement("div")
-            //title2.innerHTML = "<h1 class='matches-title'>Closest True:</h1> <p>todo</p>"
-            //document.getElementById("answer-box").appendChild(title2)
+            scrollDown();
+        }
 
-            //let title3 = document.createElement("div")
-            //title3.innerHTML = "<h1 class='matches-title'>Closest False:</h1> <p>todo</p>"
-            //document.getElementById("answer-box").appendChild(title3)
+        function scrollDown() {
+            document.getElementById("show-after-submit").scrollIntoView({
+                block: "nearest",
+                inline: "center",
+                behavior: "smooth",
+                alignToTop: true
+                });
         }
 
     </script>
