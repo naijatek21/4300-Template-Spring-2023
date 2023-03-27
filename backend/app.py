@@ -43,18 +43,22 @@ def build_docs_dictionary():
 
 #Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
 
-def jaccard_top_titles(top_k_searches):
-    titles_arr = []
-    for tup in top_k_searches:
-        article_index = tup[0]
-        score = tup[1]
-        sql_article = f"""SELECT title FROM mytable"""
-        data = mysql_engine.query_selector(sql_article)
-        results_as_dict = data.mappings().all()
-        titles_arr.append((results_as_dict[0]["title"], score))
+def jaccard_top_titles(top_k_searches): 
+    title_score_arr = []
+    sql_article = f"""SELECT title FROM mytable""" 
+    data = mysql_engine.query_selector(sql_article)
+    results_as_dict = data.mappings().all()
+    
+    for i in range(len(top_k_searches)):
+        article_index = top_k_searches[i][0]
+        score = top_k_searches[i][1]
+        title_score_arr.append((results_as_dict[i]["title"], score))
         
-    return titles_arr
+    return title_score_arr
 
+def json_conversion(titles_score):
+    keys = ["title","sim"]
+    return json.dumps([dict(zip(keys,i)) for i in titles_score])
 
 
 @app.route("/")
@@ -78,6 +82,7 @@ def search_jaccard():
     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
     top_searches = jd.sort_top_k(search_similarities)
     top_titles = jaccard_top_titles(top_searches)
+    print(top_titles)
     return json_conversion(top_titles)
 
 app.run(debug=True)
