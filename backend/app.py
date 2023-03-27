@@ -29,9 +29,13 @@ CORS(app)
 # but if you decide to use SQLAlchemy ORM framework, 
 # there's a much better and cleaner way to do this
 
+def build_docs_dictionary():
+    iterator = 0
+    query_sql = f"""SELECT text FROM mytable"""
+    data = mysql_engine.query_selector(query_sql)
 
 #Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
-def sql_jaccard_search(top_k_searches):
+def jaccard_top_titles(top_k_searches):
     titles_arr = []
     for tup in top_k_searches:
         article_index = tup[0]
@@ -57,11 +61,13 @@ app.run(debug=True)
 
 # Implementing routing for Jaccard search here
 @app.route("/titles")
-def episodes_search_jaccard():
+def search_jaccard():
     text = request.args.get("text")
+    docs_dictionary = build_docs_dictionary()
     tokenized = jd.tokenizeWords(text)
-    top_searches = "Not implemented"
-    top_titles = sql_jaccard_search(top_searches)
+    search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
+    top_searches = jd.sort_top_k(search_similarities)
+    top_titles = jaccard_top_titles(top_searches)
     return sql_search(text)
 
 
@@ -69,4 +75,5 @@ def sql_search(episode):
     query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
     keys = ["id","title","descr"]
     data = mysql_engine.query_selector(query_sql)
+    print(data)
     return json.dumps([dict(zip(keys,i)) for i in data])
