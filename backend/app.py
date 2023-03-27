@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import jaccard as jd
-# import cossim as cos
+import cossim as cos
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -38,13 +38,12 @@ def build_docs_dictionary():
     results_as_dict = data.mappings().all()
     for i in range(len(results_as_dict)): 
         data_token = jd.tokenizeWords(results_as_dict[i]["text"].lower())
-        iterator+=1
         doc_dictionary[iterator] = data_token
+        iterator+=1
     return doc_dictionary
 
 #Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
-
-def jaccard_top_titles(top_k_searches): 
+def top_titles_scores(top_k_searches): 
     title_score_arr = []
     sql_article = f"""SELECT title FROM mytable""" 
     data = mysql_engine.query_selector(sql_article)
@@ -76,28 +75,29 @@ def home():
 
 # Implementing routing for Jaccard search here
 @app.route("/titles")
-def search_jaccard():
+def search_cossim():
     text = request.args.get("text")
-    tokenized = jd.tokenizeWords(text.lower())
+    tokenized = cos.tokenizeWords(text.lower())
     docs_dictionary = build_docs_dictionary()
-    search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
-    top_searches = jd.sort_top_k(search_similarities)
-    top_titles = jaccard_top_titles(top_searches)
-    print(top_titles)
-    return json_conversion(top_titles)
+    index_titles = list(docs_dictionary.keys())
+    word_to_index = cos.word_to_index_gen(docs_dictionary)
+    query_tf = cos.tf_query(tokenized ,word_to_index)
+    article_tf = cos.tf_articles(docs_dictionary,word_to_index)
+    sim_scores = cos.cosine_sim(query_tf,article_tf)
+    top_titles = cos.sort_top_k(sim_scores,index_titles)
+    top = top_titles_scores(top_titles)
+    return json_conversion(top)
 
-# def search_cossim():
+# def search_jaccard():
 #     text = request.args.get("text")
-#     tokenized = cos.tokenizeWords(text.lower())
+#     tokenized = jd.tokenizeWords(text.lower())
 #     docs_dictionary = build_docs_dictionary()
-#     index_titles = list(docs_dictionary.keys())
-#     print(index_titles)
-#     word_to_index = cos.word_to_index_gen(docs_dictionary.keys())
-#     query_tf = cos.tf_query(tokenized ,word_to_index)
-#     article_tf = cos.tf_articles(docs_dictionary,word_to_index)
-#     sim_scores = cos.cosine_sim(query_tf,article_tf)
-#     top_titles = sort_top_k(sim_scores,index_titles)
+#     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
+#     top_searches = jd.sort_top_k(search_similarities)
+#     top_titles = jaccard_top_titles(top_searches)
+#     print(top_titles)
 #     return json_conversion(top_titles)
+
 
 
 #app.run(debug=True)
