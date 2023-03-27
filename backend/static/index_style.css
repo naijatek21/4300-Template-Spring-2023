@@ -129,3 +129,7 @@ body{
   font-size: 42px;
   margin-top: 70px;
 }
+
+#show-after-submit {
+  display: none;
+}
