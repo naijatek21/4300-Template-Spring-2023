@@ -42,7 +42,7 @@ def build_docs_dictionary():
         iterator+=1
     return doc_dictionary
 
-#Takes in the tuple array of top k searches from the generalized jaccard similarity, and returns the top k titles of articles in an array 
+#Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
     title_score_arr = []
     sql_article = f"""SELECT title FROM mytable""" 
@@ -69,6 +69,12 @@ def home():
 #     text = request.args.get("text")
 #     return sql_search(text)
 
+def get_social_data():
+    print('Running get_social_data')
+    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Reuters' """
+    data = mysql_engine.query_selector(query_sql)
+    results_as_dict = data.mappings().all()
+    print(results_as_dict)
 
 
 
@@ -85,6 +91,7 @@ def search_cossim():
     sim_scores = cos.cosine_sim(query_tf,article_tf)
     top_titles = cos.sort_top_k(sim_scores,index_titles)
     top = top_titles_scores(top_titles)
+    get_social_data()
     return json_conversion(top)
 
 # def search_jaccard():
@@ -99,7 +106,7 @@ def search_cossim():
 
 
 
-#app.run(debug=True)
+app.run(debug=True)
 
 
 # def sql_search(episode):
