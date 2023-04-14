@@ -70,11 +70,10 @@ def home():
 #     return sql_search(text)
 
 def get_social_data():
-    print('Running get_social_data')
     query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Reuters' """
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = data.mappings().all()
-    print(results_as_dict)
+    return results_as_dict
 
 
 
@@ -91,7 +90,7 @@ def search_cossim():
     sim_scores = cos.cosine_sim(query_tf,article_tf)
     top_titles = cos.sort_top_k(sim_scores,index_titles)
     top = top_titles_scores(top_titles)
-    get_social_data()
+    social = get_social_data()
     return json_conversion(top)
 
 # def search_jaccard():
