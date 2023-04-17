@@ -59,6 +59,14 @@ def json_conversion(titles_score):
     keys = ["title","sim"]
     return json.dumps([dict(zip(keys,i)) for i in titles_score])
 
+def json_serializer(obj):
+    if isinstance(obj, bytes):
+        return obj.decode('utf-8')
+    else:
+        raise TypeError(
+            "Unserializable object {} of type {}".format(obj, type(obj))
+        )
+
 
 @app.route("/")
 def home():
@@ -69,12 +77,13 @@ def home():
 #     text = request.args.get("text")
 #     return sql_search(text)
 
+
+@app.route("/source")
 def get_social_data():
     query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Reuters' """
     data = mysql_engine.query_selector(query_sql)
-    results_as_dict = data.mappings().all()
-    return results_as_dict
-
+    results_as_dict = dict(data.mappings().all()[0])
+    return json.dumps(results_as_dict, default=json_serializer)
 
 
 # Implementing routing for Jaccard search here
