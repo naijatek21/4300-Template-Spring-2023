@@ -1,5 +1,5 @@
 :root {
-  --lightblue: #c7d8ea;
+  --lightblue: #dae8f7;
   --blue: #2b84dc;
   --navy: #2a3280;
   --gray: #434652;
@@ -119,7 +119,6 @@ body{
   color:var(--blue);
 }
 
-
 .matches-title {
   color: var(--navy);
   font-family: "Impact", sans-serif;
@@ -132,4 +131,35 @@ body{
 
 #show-after-submit {
   display: none;
+}
+
+table.rating-table {
+  margin-top: 30px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+}
+
+table.rating-table td, table.rating-table th {
+  border: 3px solid white;
+  border-radius: 5px;
+  padding: 3px 2px;
+}
+
+table.rating-table tbody td {
+  font-size: 14px;
+}
+
+table.rating-table tbody td b {
+  color:var(--blue)
+}
+
+table.rating-table thead {
+  background: var(--lightblue);
+}
+
+table.rating-table thead th {
+  font-weight: bold;
+  color: var(--navy);
+  text-align: center;
 }
