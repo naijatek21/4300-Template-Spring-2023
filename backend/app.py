@@ -79,8 +79,9 @@ def home():
 
 
 @app.route("/source")
-def get_social_data():
-    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Reuters' """
+def get_social_data(title):
+    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = '%%{title}%%' """
+    # query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Reuters' """
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
@@ -90,6 +91,7 @@ def get_social_data():
 @app.route("/titles")
 def search_cossim():
     text = request.args.get("text")
+    title = request.args.get("title")
     tokenized = cos.tokenizeWords(text.lower())
     docs_dictionary = build_docs_dictionary()
     index_titles = list(docs_dictionary.keys())
@@ -99,7 +101,7 @@ def search_cossim():
     sim_scores = cos.cosine_sim(query_tf,article_tf)
     top_titles = cos.sort_top_k(sim_scores,index_titles)
     top = top_titles_scores(top_titles)
-    social = get_social_data()
+    social = get_social_data(title)
     return json_conversion(top)
 
 # def search_jaccard():
