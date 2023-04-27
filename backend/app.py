@@ -33,11 +33,11 @@ CORS(app)
 def build_docs_dictionary():
     doc_dictionary = {}
     iterator = 0
-    query_sql = f"""SELECT text FROM mytable"""
+    query_sql = f"""SELECT content FROM mytable"""
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = data.mappings().all()
     for i in range(len(results_as_dict)): 
-        data_token = jd.tokenizeWords(results_as_dict[i]["text"].lower())
+        data_token = jd.tokenizeWords(results_as_dict[i]["content"].lower())
         doc_dictionary[iterator] = data_token
         iterator+=1
     return doc_dictionary
