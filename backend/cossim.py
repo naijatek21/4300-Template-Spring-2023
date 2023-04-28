@@ -53,18 +53,24 @@ def get_index_titles(article_titles):
     return index_to_title
 
     
-# # prepocessing
-# # TEST CASE 1
-# # tie
-# query =['white', 'house','biden', 'biden']
-# articles = {0:["the", "white","house"], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis"],3:["the", "upcomming","election"],4:["trump", "and","biden"]}
-# index_titles = list(articles.keys())
-# word_to_index = word_to_index_gen(articles)
-# query_tf = tf_query(query,word_to_index)
-# article_tf = tf_articles(articles,word_to_index)
-# sim_scores = cosine_sim(query_tf,article_tf)
-# recommendations = sort_top_k(sim_scores,index_titles)
-# print(recommendations)
+# prepocessing
+# TEST CASE 1
+# tie
+query =['apple', 'banana']
+articles = {
+        0: ['apple', 'banana', 'apple', 'orange'],
+        1: ['banana', 'orange'],
+        2: ['apple', 'orange'],
+        3: ['banana'],
+        4: ['cherry'],
+    }
+index_titles = list(articles.keys())
+word_to_index = word_to_index_gen(articles)
+query_tf = tf_query(query,word_to_index)
+article_tf = tf_articles(articles,word_to_index)
+sim_scores = cosine_sim(query_tf,article_tf)
+recommendations = sort_top_k(sim_scores,index_titles)
+print(recommendations)
 
 
 # # TEST CASE 2

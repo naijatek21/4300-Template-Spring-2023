@@ -13,7 +13,7 @@ CREATE TABLE mytable(
   ,year        NUMERIC(6,1) NOT NULL
   ,month       NUMERIC(4,1) NOT NULL
   ,url         VARCHAR(30)
-  ,content     TEXT(75897) NOT NULL
+  ,content     TEXT(50000) NOT NULL
 );
 
 CREATE TABLE mytable2(

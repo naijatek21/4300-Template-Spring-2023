@@ -5,6 +5,8 @@ from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import jaccard as jd
 import cossim as cos
+import cossim_new
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -37,7 +39,7 @@ def build_docs_dictionary():
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = data.mappings().all()
     for i in range(len(results_as_dict)): 
-        data_token = jd.tokenizeWords(results_as_dict[i]["content"].lower())
+        data_token = results_as_dict[i]["content"].lower()
         doc_dictionary[iterator] = data_token
         iterator+=1
     return doc_dictionary
@@ -100,17 +102,13 @@ def get_social_data():
 @app.route("/titles")
 def search_cossim():
     text = request.args.get("text")
-    title = request.args.get("title")
-    tokenized = cos.tokenizeWords(text.lower())
     docs_dictionary = build_docs_dictionary()
     index_titles = list(docs_dictionary.keys())
-    word_to_index = cos.word_to_index_gen(docs_dictionary)
-    query_tf = cos.tf_query(tokenized ,word_to_index)
-    article_tf = cos.tf_articles(docs_dictionary,word_to_index)
-    sim_scores = cos.cosine_sim(query_tf,article_tf)
-    top_titles = cos.sort_top_k(sim_scores,index_titles)
-    top = top_titles_scores(top_titles)
-    social = get_social_data()
+    vectorizer = TfidfVectorizer()
+    article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
+    query_tfidf = vectorizer.transform([text])
+    top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
+    top = top_titles_scores(top_articles)
     return json_conversion(top)
 
 # def search_jaccard():
