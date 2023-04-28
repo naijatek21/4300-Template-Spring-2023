@@ -80,7 +80,7 @@ def home():
 
 @app.route("/source")
 def get_social_data():
-    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'ABC News' """
+    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Breitbart' """
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
