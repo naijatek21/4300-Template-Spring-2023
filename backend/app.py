@@ -76,10 +76,6 @@ def get_source(title):
     return result_as_str
 
 
-
-
-
-
 @app.route("/")
 def home():
     return render_template('index.html',title="sample html")
@@ -92,6 +88,7 @@ def home():
 
 @app.route("/source")
 def get_social_data():
+
     query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Fox News' """
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = dict(data.mappings().all()[0])
@@ -106,7 +103,7 @@ def search_cossim():
     index_titles = list(docs_dictionary.keys())
     vectorizer = TfidfVectorizer()
     article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
-    query_tfidf = vectorizer.transform([text])
+    query_tfidf = vectorizer.transform([text.lower()])
     top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
     top = top_titles_scores(top_articles)
     return json_conversion(top)

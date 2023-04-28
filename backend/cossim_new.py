@@ -1,8 +1,6 @@
 from collections import defaultdict
 import numpy as np
 
-
-
 def cosine_sim(query_tfidf, articles_tfidf, article_names):
     num_articles = articles_tfidf.shape[0]
     article_similarities = np.zeros(num_articles)
