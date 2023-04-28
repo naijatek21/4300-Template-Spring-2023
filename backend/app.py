@@ -52,7 +52,7 @@ def top_titles_scores(top_k_searches):
         article_index = top_k_searches[i][0]
         score = top_k_searches[i][1]
         title_score_arr.append((results_as_dict[article_index]["title"], score))
-        
+
     return title_score_arr
 
 def json_conversion(titles_score):
@@ -67,6 +67,16 @@ def json_serializer(obj):
             "Unserializable object {} of type {}".format(obj, type(obj))
         )
 
+def get_source(title):
+    sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
+    data = mysql_engine.query_selector(sql_article)
+    result_as_str = data.mappings().all()[0]['publication']
+    return result_as_str
+
+
+
+
+
 
 @app.route("/")
 def home():
@@ -80,7 +90,7 @@ def home():
 
 @app.route("/source")
 def get_social_data():
-    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Business Insider' """
+    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Fox News' """
     data = mysql_engine.query_selector(query_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
