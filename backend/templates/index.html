@@ -97,7 +97,7 @@
                             <tr>
                                 <td>${source}</td>
                                 <td>${ratingText(rating)}</td>
-                                <td>${(agree/total).toFixed(5)*100}% Agree</td>
+                                <td>${Number.parseFloat((agree/total)*100).toFixed(2)}% Agree</td>
                             </tr>
                         </table>
                     </div>
