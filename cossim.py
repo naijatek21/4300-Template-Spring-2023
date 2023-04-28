@@ -52,6 +52,13 @@ def get_index_titles(article_titles):
         index_to_title[idx] = title
     return index_to_title
 
+
+def update_relevant(query, title):
+    return
+
+def update_irrelevant(query, title):
+    return
+
 relevant = {
     "house": ["biden","crisis"],
     "town":["ghost"],
