@@ -145,7 +145,6 @@
             document.getElementById("answer-box").innerHTML = ""
 
             data = await getArticles(document.getElementById("filter-text-val").value);
-
             data.forEach(row => {
                 makeAnswerBox(row, "Reuters")
             });

@@ -69,11 +69,13 @@ def json_serializer(obj):
             "Unserializable object {} of type {}".format(obj, type(obj))
         )
 
-def get_source(title):
-    sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
-    data = mysql_engine.query_selector(sql_article)
-    result_as_str = data.mappings().all()[0]['publication']
-    return result_as_str
+# def get_source(title):
+#     sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
+#     data = mysql_engine.query_selector(sql_article)
+#     result_as_str = data.mappings().all()[0]['publication']
+#     return result_as_str
+
+    
 
 
 @app.route("/")
@@ -86,10 +88,14 @@ def home():
 #     return sql_search(text)
 
 
+
+
+
 @app.route("/source")
 def get_social_data():
-    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Fox News'"""
-    data = mysql_engine.query_selector(query_sql)
+    source = request.args.get("source")
+    source_sql = f"""SELECT * FROM mytable2 WHERE news_source = '{source}'"""
+    data = mysql_engine.query_selector(source_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
 
