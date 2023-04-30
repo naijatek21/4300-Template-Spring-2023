@@ -18,7 +18,7 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 MYSQL_USER = "root"
 MYSQL_USER_PASSWORD = ""
 MYSQL_PORT = 3306
-MYSQL_DATABASE = "fullnewsdb"
+MYSQL_DATABASE = "ratemyrizz_db"
 
 mysql_engine = MySQLDatabaseHandler(MYSQL_USER,MYSQL_USER_PASSWORD,MYSQL_PORT,MYSQL_DATABASE)
 
@@ -125,7 +125,6 @@ def search_cossim():
 #     top_titles = jaccard_top_titles(top_searches)
 #     print(top_titles)
 #     return json_conversion(top_titles)
-
 
 
 #app.run(debug=True)
