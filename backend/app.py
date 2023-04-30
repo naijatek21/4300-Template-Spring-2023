@@ -94,6 +94,7 @@ def home():
 @app.route("/source")
 def get_social_data():
     source = request.args.get("source")
+    
     source_sql = f"""SELECT * FROM mytable2 WHERE news_source = '{source}'"""
     data = mysql_engine.query_selector(source_sql)
     results_as_dict = dict(data.mappings().all()[0])

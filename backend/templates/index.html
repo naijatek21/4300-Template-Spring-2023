@@ -143,10 +143,9 @@
         async function filterText() {
             document.getElementById("show-after-submit").style.display = "block";
             document.getElementById("answer-box").innerHTML = ""
-
             data = await getArticles(document.getElementById("filter-text-val").value);
             data.forEach(row => {
-                makeAnswerBox(row, "Reuters")
+                makeAnswerBox(row, row.publication)     
             });
         }
 
