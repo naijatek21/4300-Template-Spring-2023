@@ -47,18 +47,18 @@ def build_docs_dictionary():
 #Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
     title_score_arr = []
-    sql_article = f"""SELECT title, publication FROM mytable""" 
+    sql_article = f"""SELECT title FROM mytable""" 
     data = mysql_engine.query_selector(sql_article)
     results_as_dict = data.mappings().all()
     for i in range(len(top_k_searches)):
         article_index = top_k_searches[i][0]
         score = top_k_searches[i][1]
-        title_score_arr.append((results_as_dict[article_index]["title"], score, results_as_dict[article_index]["publication"]))
+        title_score_arr.append((results_as_dict[article_index]["title"], score))
 
     return title_score_arr
 
 def json_conversion(titles_score):
-    keys = ["title","sim","publication"]
+    keys = ["title","sim"]
     return json.dumps([dict(zip(keys,i)) for i in titles_score])
 
 def json_serializer(obj):
@@ -69,13 +69,11 @@ def json_serializer(obj):
             "Unserializable object {} of type {}".format(obj, type(obj))
         )
 
-# def get_source(title):
-#     sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
-#     data = mysql_engine.query_selector(sql_article)
-#     result_as_str = data.mappings().all()[0]['publication']
-#     return result_as_str
-
-    
+def get_source(title):
+    sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
+    data = mysql_engine.query_selector(sql_article)
+    result_as_str = data.mappings().all()[0]['publication']
+    return result_as_str
 
 
 @app.route("/")
@@ -88,15 +86,11 @@ def home():
 #     return sql_search(text)
 
 
-
-
-
 @app.route("/source")
 def get_social_data():
-    source = request.args.get("source")
-    
-    source_sql = f"""SELECT * FROM mytable2 WHERE news_source = '{source}'"""
-    data = mysql_engine.query_selector(source_sql)
+
+    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Fox News' """
+    data = mysql_engine.query_selector(query_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
 
@@ -112,27 +106,4 @@ def search_cossim():
     query_tfidf = vectorizer.transform([text.lower()])
     top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
     top = top_titles_scores(top_articles)
-
     return json_conversion(top)
-
-
-# def search_jaccard():
-#     text = request.args.get("text")
-#     tokenized = jd.tokenizeWords(text.lower())
-#     docs_dictionary = build_docs_dictionary()
-#     search_similarities = jd.jaccard_generalized(tokenized, docs_dictionary)
-#     top_searches = jd.sort_top_k(search_similarities)
-#     top_titles = jaccard_top_titles(top_searches)
-#     print(top_titles)
-#     return json_conversion(top_titles)
-
-
-#app.run(debug=True)
-
-
-# def sql_search(episode):
-#     query_sql = f"""SELECT * FROM episodes WHERE LOWER( title ) LIKE '%%{episode.lower()}%%' limit 10"""
-#     keys = ["title","sim"]
-#     data = mysql_engine.query_selector(query_sql)
-#     print(data)
-#     return json.dumps([dict(zip(keys,i)) for i in data])

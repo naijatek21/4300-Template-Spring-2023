@@ -143,10 +143,12 @@
         async function filterText() {
             document.getElementById("show-after-submit").style.display = "block";
             document.getElementById("answer-box").innerHTML = ""
+
             data = await getArticles(document.getElementById("filter-text-val").value);
-            for (const row of data) {
-                await makeAnswerBox(row, row.publication);
-            }
+
+            data.forEach(row => {
+                makeAnswerBox(row, "Reuters")
+            });
         }
 
         function scrollDown() {
