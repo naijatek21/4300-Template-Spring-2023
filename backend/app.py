@@ -47,18 +47,18 @@ def build_docs_dictionary():
 #Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
     title_score_arr = []
-    sql_article = f"""SELECT title FROM mytable""" 
+    sql_article = f"""SELECT title, publication FROM mytable""" 
     data = mysql_engine.query_selector(sql_article)
     results_as_dict = data.mappings().all()
     for i in range(len(top_k_searches)):
         article_index = top_k_searches[i][0]
         score = top_k_searches[i][1]
-        title_score_arr.append((results_as_dict[article_index]["title"], score))
+        title_score_arr.append((results_as_dict[article_index]["title"], score, results_as_dict[article_index]["publication"]))
 
     return title_score_arr
 
 def json_conversion(titles_score):
-    keys = ["title","sim"]
+    keys = ["title","sim","publication"]
     return json.dumps([dict(zip(keys,i)) for i in titles_score])
 
 def json_serializer(obj):
@@ -69,11 +69,13 @@ def json_serializer(obj):
             "Unserializable object {} of type {}".format(obj, type(obj))
         )
 
-def get_source(title):
-    sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
-    data = mysql_engine.query_selector(sql_article)
-    result_as_str = data.mappings().all()[0]['publication']
-    return result_as_str
+# def get_source(title):
+#     sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
+#     data = mysql_engine.query_selector(sql_article)
+#     result_as_str = data.mappings().all()[0]['publication']
+#     return result_as_str
+
+    
 
 
 @app.route("/")
@@ -86,11 +88,15 @@ def home():
 #     return sql_search(text)
 
 
+
+
+
 @app.route("/source")
 def get_social_data():
-
-    query_sql = f"""SELECT * FROM mytable2 WHERE news_source = 'Fox News' """
-    data = mysql_engine.query_selector(query_sql)
+    source = request.args.get("source")
+    
+    source_sql = f"""SELECT * FROM mytable2 WHERE news_source = '{source}'"""
+    data = mysql_engine.query_selector(source_sql)
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
 
@@ -106,4 +112,5 @@ def search_cossim():
     query_tfidf = vectorizer.transform([text.lower()])
     top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
     top = top_titles_scores(top_articles)
+
     return json_conversion(top)
