@@ -113,5 +113,4 @@ def search_cossim():
     top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
     top = top_titles_scores(top_articles)
     return json_conversion(top)
-    
 
