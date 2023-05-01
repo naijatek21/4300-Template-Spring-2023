@@ -57,10 +57,6 @@ def top_titles_scores(top_k_searches):
 
     return title_score_arr
 
-def json_conversion(titles_score):
-    keys = ["title","sim","publication"]
-    return json.dumps([dict(zip(keys,i)) for i in titles_score])
-
 def json_serializer(obj):
     if isinstance(obj, bytes):
         return obj.decode('utf-8')
@@ -68,6 +64,12 @@ def json_serializer(obj):
         raise TypeError(
             "Unserializable object {} of type {}".format(obj, type(obj))
         )
+
+def json_conversion(titles_score):
+    keys = ["title","sim","publication"]
+    return json.dumps([dict(zip(keys,i)) for i in titles_score], default = json_serializer)
+
+
 
 # def get_source(title):
 #     sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
