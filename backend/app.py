@@ -100,7 +100,7 @@ def get_social_data():
     source_sql = f"""SELECT * FROM mytable2 WHERE news_source = '{source}'"""
     data = mysql_engine.query_selector(source_sql)
     results_as_dict = dict(data.mappings().all()[0])
-    return json.dumps(results_as_dict, default=json_serializer)
+    return json.dumps(results_as_dict)
 
 
 # Implementing routing for Jaccard search here
