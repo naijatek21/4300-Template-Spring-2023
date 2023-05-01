@@ -53,22 +53,27 @@ def get_index_titles(article_titles):
     return index_to_title
 
 
+relevant = defaultdict(list)
+irrelevant = defaultdict(list)
+
 def update_relevant(query, title):
-    return
+  query_toks = tokenizeWords(query)
+  title_toks = tokenizeWords(title)
+  for qword in query_toks:
+    for tword in title_toks:
+      relevant[qword] += [tword]
+  return
+
 
 def update_irrelevant(query, title):
-    return
+  print(irrelevant)
+  query_toks = tokenizeWords(query)
+  title_toks = tokenizeWords(title)
+  for qword in query_toks:
+    for tword in title_toks:
+      irrelevant[qword] += [tword]
+  return
 
-relevant = {
-    "house": ["biden","crisis"],
-    "town":["ghost"],
-    "ukraine":['russia','biden']
-}
-
-irrelevant = {
-    "biggest": ["biden", "sport","ball"],
-    "russia":["trump"]
-} 
 def rocchio(query, relevant, irrelevant, articles, word_to_index,a=.6, b=.3, c=.6, clip = True):
     q1 = 0
     q0 = query
