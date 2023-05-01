@@ -42,6 +42,22 @@ def build_docs_dictionary():
         iterator+=1
     return doc_dictionary
 
+
+
+
+#Creates an inverted index for documents
+def build_inverted_index(doc_dict):
+    res = {}
+    for {doc:words} in doc_dict:
+        for t in set(words):
+            if t not in res.keys():
+                res.update({t:list()})     
+            cnt = (words).count(t)
+            res[t].append((doc,cnt))
+ return res
+
+
+
 #Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
     title_score_arr = []
@@ -83,6 +99,7 @@ def search_cossim():
     text = request.args.get("text")
     tokenized = cos.tokenizeWords(text.lower())
     docs_dictionary = build_docs_dictionary()
+    inv_index = build_inverted_index(docs_dictionary)
     index_titles = list(docs_dictionary.keys())
     word_to_index = cos.word_to_index_gen(docs_dictionary)
     query_tf = cos.tf_query(tokenized ,word_to_index)
