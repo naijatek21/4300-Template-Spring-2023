@@ -1,7 +1,7 @@
 from nltk.tokenize import RegexpTokenizer
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from collections import defaultdict
+#from collections import defaultdict
 
 def tokenizeWords(words):
     tokenizer = RegexpTokenizer(r'\w+')
@@ -50,25 +50,25 @@ def get_index_titles(article_titles):
         index_to_title[idx] = title
     return index_to_title
 
-relevant = defaultdict(list)
-irrelevant = defaultdict(list)
+relevant = {}
+irrelevant = {}
 
-def update_relevant(query, title):
-    print("updating relevant")
+def update_rocchio_dict(query, title, relevantBool):
+    print("updating rocchio dict, relevant: ", relevantBool)
     query_toks = tokenizeWords(query)
     title_toks = tokenizeWords(title)
     for qword in query_toks:
-        for tword in title_toks:
-            relevant[qword] += [tword]
-    print(relevant)
-    return
-
-def update_irrelevant(query, title):
-    print("updating irrelevant")
-    query_toks = tokenizeWords(query)
-    title_toks = tokenizeWords(title)
-    for qword in query_toks:
-        for tword in title_toks:
-            irrelevant[qword] += [tword]
-    print(irrelevant)
+        for tword in title_toks: 
+            if relevantBool:
+                if qword in relevant:
+                    relevant[qword] += [tword]
+                else:
+                    relevant[qword] = [tword]
+            else:
+                if qword in irrelevant:
+                    irrelevant[qword] += [tword]
+                else:
+                    irrelevant[qword] = [tword]
+    print("relevant: ", relevant)
+    print("irrelevant: ", irrelevant)
     return

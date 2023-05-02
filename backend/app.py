@@ -104,13 +104,7 @@ def send_feedback():
     query = request.args.get("query")
     title = request.args.get("title")
     relevant = request.args.get("relevant")
-    print(query)
-    print(title)
-    print(relevant)
 
-    if relevant:
-        cos.update_relevant(query, title)
-    else:
-        cos.update_irrelevant(query, title)
+    cos.update_rocchio_dict(query, title, relevant == "true")
 
     return json.dumps({}, default=json_serializer)
