@@ -16,7 +16,7 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 # Don't worry about the deployment credentials, those are fixed
 # You can use a different DB name if you want to
 MYSQL_USER = "root"
-MYSQL_USER_PASSWORD = ""
+MYSQL_USER_PASSWORD = "Dazzlin178!"
 MYSQL_PORT = 3306
 MYSQL_DATABASE = "fullnewsdb"
 
@@ -43,6 +43,17 @@ def build_docs_dictionary():
         doc_dictionary[iterator] = data_token
         iterator+=1
     return doc_dictionary
+
+# #Creates an inverted index for documents
+# def build_inverted_index(doc_dict):
+#     res = {}
+#     for doc in doc_dict:
+#         for t in set(doc_dict[doc]):
+#             if t not in res.keys():
+#                 res.update({t:list()})     
+#             cnt = (doc_dict[doc]).count(t)
+#             res[t].append((doc,cnt))
+#     return res
 
 #Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
@@ -89,11 +100,22 @@ def get_social_data():
 @app.route("/titles")
 def search_cossim():
     text = request.args.get("text")
+    tokenized = cos.tokenizeWords(text.lower())
+    # docs_dictionary = build_docs_dictionary()
+    # inv_index = build_inverted_index(docs_dictionary)
+    # index_titles = list(docs_dictionary.keys())
+    # vectorizer = TfidfVectorizer()
+    # article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
     docs_dictionary = build_docs_dictionary()
     index_titles = list(docs_dictionary.keys())
+    # print("check for test ",word_to_index["test"])
+    word_to_index = cos.word_to_index_gen(docs_dictionary)
     vectorizer = TfidfVectorizer()
     article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
+    query_tfidf = vectorizer.transform([text])
     query_tfidf = vectorizer.transform([text.lower()])
+    print(word_to_index)
+    query_tfidf = cos.rocchio(query_tfidf,article_tfidf,word_to_index)
     top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
     top = top_titles_scores(top_articles)
     return json_conversion(top)
