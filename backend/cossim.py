@@ -103,77 +103,77 @@ def rocchio(query, relevant, irrelevant, articles, word_to_index,a=.6, b=.3, c=.
     return q1
 
 
-# # TEST CASE 1
-# tie: with rocchio we no longer have a tie because it considered more relevant words
-print("test 1")
-query =['white', 'house','biden', 'biden']
-articles = {0:["the", "white","house"], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis"],3:["the", "upcomming","election"],4:["trump", "and","biden"]}
-index_titles = list(articles.keys())
-word_to_index = word_to_index_gen(articles)
-query_tf = tf_query(query,word_to_index)
-article_tf = tf_articles(articles,word_to_index)
-new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
-sim_scores = cosine_sim(new_query,article_tf)
-recommendations = sort_top_k(sim_scores,index_titles)
-print(recommendations)
+# # # TEST CASE 1
+# # tie: with rocchio we no longer have a tie because it considered more relevant words
+# print("test 1")
+# query =['white', 'house','biden', 'biden']
+# articles = {0:["the", "white","house"], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis"],3:["the", "upcomming","election"],4:["trump", "and","biden"]}
+# index_titles = list(articles.keys())
+# word_to_index = word_to_index_gen(articles)
+# query_tf = tf_query(query,word_to_index)
+# article_tf = tf_articles(articles,word_to_index)
+# new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
+# sim_scores = cosine_sim(new_query,article_tf)
+# recommendations = sort_top_k(sim_scores,index_titles)
+# print(recommendations)
 
 
-# TEST CASE 2
-# differnt size article tf
-print("test 2")
-query =['white','house','trump','ukraine']
-articles = {0:[], 1:["war", "in","ukraine"],2:["biggest", "house","crisis"],3:["the","election"],4:["trump"]}
-index_titles = list(articles.keys())
-word_to_index = word_to_index_gen(articles)
-query_tf = tf_query(query,word_to_index)
-article_tf = tf_articles(articles,word_to_index)
-new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index,clip = True)
-sim_scores = cosine_sim(new_query,article_tf)
-recommendations = sort_top_k(sim_scores,index_titles)
-print(recommendations)
+# # TEST CASE 2
+# # differnt size article tf
+# print("test 2")
+# query =['white','house','trump','ukraine']
+# articles = {0:[], 1:["war", "in","ukraine"],2:["biggest", "house","crisis"],3:["the","election"],4:["trump"]}
+# index_titles = list(articles.keys())
+# word_to_index = word_to_index_gen(articles)
+# query_tf = tf_query(query,word_to_index)
+# article_tf = tf_articles(articles,word_to_index)
+# new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index,clip = True)
+# sim_scores = cosine_sim(new_query,article_tf)
+# recommendations = sort_top_k(sim_scores,index_titles)
+# print(recommendations)
 
 
-# TEST CASE 3
-# one word query
-print("test 3")
-query =['ukraine']
-articles = {0:["russia"], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis","biden"],3:["the","election"],4:["trump"]}
-index_titles = list(articles.keys())
-word_to_index = word_to_index_gen(articles)
-query_tf = tf_query(query,word_to_index)
-article_tf = tf_articles(articles,word_to_index)
-new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
-sim_scores = cosine_sim(new_query,article_tf)
-recommendations = sort_top_k(sim_scores,index_titles)
-print(recommendations)
+# # TEST CASE 3
+# # one word query
+# print("test 3")
+# query =['ukraine']
+# articles = {0:["russia"], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis","biden"],3:["the","election"],4:["trump"]}
+# index_titles = list(articles.keys())
+# word_to_index = word_to_index_gen(articles)
+# query_tf = tf_query(query,word_to_index)
+# article_tf = tf_articles(articles,word_to_index)
+# new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
+# sim_scores = cosine_sim(new_query,article_tf)
+# recommendations = sort_top_k(sim_scores,index_titles)
+# print(recommendations)
 
 
-# # TEST CASE 4
-# query not found
-print("test 4")
-query =['ghost']
-articles = {0:["war", "in","ukraine"],1:["biggest", "housing","crisis"],2:["the","election"],3:["trump"]}
-index_titles = list(articles.keys())
-word_to_index = word_to_index_gen(articles)
-query_tf = tf_query(query,word_to_index)
-article_tf = tf_articles(articles,word_to_index)
-new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
-sim_scores = cosine_sim(new_query,article_tf)
-recommendations = sort_top_k(sim_scores,index_titles)
-print(recommendations)
+# # # TEST CASE 4
+# # query not found
+# print("test 4")
+# query =['ghost']
+# articles = {0:["war", "in","ukraine"],1:["biggest", "housing","crisis"],2:["the","election"],3:["trump"]}
+# index_titles = list(articles.keys())
+# word_to_index = word_to_index_gen(articles)
+# query_tf = tf_query(query,word_to_index)
+# article_tf = tf_articles(articles,word_to_index)
+# new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index, clip = True)
+# sim_scores = cosine_sim(new_query,article_tf)
+# recommendations = sort_top_k(sim_scores,index_titles)
+# print(recommendations)
 
 
 
-# # TEST CASE 5
-# # query word length larger than articles
-print("test 5")
-query =['ghost','town','war','trump','biden','russia']
-articles = {0:[], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis"],3:["the","election"],4:["trump"]}
-index_titles = list(articles.keys())
-word_to_index = word_to_index_gen(articles)
-query_tf = tf_query(query,word_to_index)
-article_tf = tf_articles(articles,word_to_index)
-new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index,clip = True)
-sim_scores = cosine_sim(new_query,article_tf)
-recommendations = sort_top_k(sim_scores,index_titles)
-print(recommendations)
+# # # TEST CASE 5
+# # # query word length larger than articles
+# print("test 5")
+# query =['ghost','town','war','trump','biden','russia']
+# articles = {0:[], 1:["war", "in","ukraine"],2:["biggest", "housing","crisis"],3:["the","election"],4:["trump"]}
+# index_titles = list(articles.keys())
+# word_to_index = word_to_index_gen(articles)
+# query_tf = tf_query(query,word_to_index)
+# article_tf = tf_articles(articles,word_to_index)
+# new_query = rocchio(query_tf, relevant, irrelevant, article_tf, word_to_index,clip = True)
+# sim_scores = cosine_sim(new_query,article_tf)
+# recommendations = sort_top_k(sim_scores,index_titles)
+# print(recommendations)
