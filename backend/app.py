@@ -68,15 +68,6 @@ def json_serializer(obj):
 def json_conversion(titles_score):
     keys = ["title","sim","publication"]
     return json.dumps([dict(zip(keys,i)) for i in titles_score])
-
-
-
-# def get_source(title):
-#     sql_article = f"""SELECT publication FROM mytable where title = '{title}'""" 
-#     data = mysql_engine.query_selector(sql_article)
-#     result_as_str = data.mappings().all()[0]['publication']
-#     return result_as_str
-
     
 
 
@@ -84,15 +75,7 @@ def json_conversion(titles_score):
 def home():
     return render_template('index.html',title="sample html")
 
-# @app.route("/episodes")
-# def episodes_search():
-#     text = request.args.get("text")
-#     return sql_search(text)
-
-
-
-
-
+#Social Data
 @app.route("/source")
 def get_social_data():
     source = request.args.get("source")
@@ -102,8 +85,7 @@ def get_social_data():
     results_as_dict = dict(data.mappings().all()[0])
     return json.dumps(results_as_dict, default=json_serializer)
 
-
-# Implementing routing for Jaccard search here
+#Search for Articles
 @app.route("/titles")
 def search_cossim():
     text = request.args.get("text")
@@ -116,4 +98,19 @@ def search_cossim():
     top = top_titles_scores(top_articles)
     return json_conversion(top)
     
+#Send Rocchio Feedback
+@app.route("/feedback")
+def send_feedback():
+    query = request.args.get("query")
+    title = request.args.get("title")
+    relevant = request.args.get("relevant")
+    print(query)
+    print(title)
+    print(relevant)
 
+    if relevant:
+        cos.update_relevant(query, title)
+    else:
+        cos.update_irrelevant(query, title)
+
+    return json.dumps({}, default=json_serializer)

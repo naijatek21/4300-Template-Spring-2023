@@ -106,7 +106,7 @@ body{
   background-color: white;
   border-radius: 8px;
   margin: 15px;
-  padding: 5px 20px 20px;
+  padding: 5px 20px 10px;
 }
 
 .article-title{
@@ -115,6 +115,7 @@ body{
 }
 
 .similarity-text{
+  margin-top: 10px;
   font-family: inherit;
   color:var(--blue);
 }
@@ -162,4 +163,21 @@ table.rating-table thead th {
   font-weight: bold;
   color: var(--navy);
   text-align: center;
+}
+
+.feedback {
+  margin-top: 20px;
+}
+
+.feedback button {
+    border: none;
+    background: none;
+    color: var(--navy);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.feedback {
+  font-size: 14px;
 }

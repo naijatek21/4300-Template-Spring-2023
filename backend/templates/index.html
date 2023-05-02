@@ -25,13 +25,18 @@
         <div id="show-after-submit">
             <h1 class="matches-title">Closest Matches:</h1>
             <div id="answer-box">
-                <!-- Test box for front end development:
-                    <div class='article-box'>
-                    <h3 class='article-title'>Title</h3>
-                    <p class='similarity-text'>10% Match</p>
-                    <progress max="100" value=10></progress>
-                    
-                    <button onclick="getSourceRating('Reuters')">rating</button>
+                <!-- Test box for front end development:-->
+                <div class='article-box'>
+                    <h3 class='article-title'>Title: This is an Article About Nothing</h3>
+                    <div class='similarity-text'>
+                        <progress max="100" value=10></progress>
+                        10% Match
+                    </div>
+                    <div class='feedback'>
+                        Is this article relevant to your search?
+                        <button onclick="sendFeedback(this)">Relevant</button>
+                        <button onclick="sendFeedback(this)">Irrelevant</button>
+                    </div>
                     <div class='source-rating'>
                         <table class='rating-table' 
                         onclick="window.open('https://www.allsides.com/news-source/reuters', '_blank')" 
@@ -48,12 +53,8 @@
                             </tr>
                         </table>
                     </div>
-                </div>-->
+                </div>
             </div>
-            
-            <h1 class="matches-title">Closest False: (todo)</h1>
-            
-            <h1 class="matches-title">Closest True: (todo)</h1>
         </div>
     </div>
 
@@ -83,8 +84,18 @@
         function answerBoxTemplate(title, sim, link, source, rating, agree, total) {
             return `<div class='article-box'>
                 <h3 class='article-title'>${title}</h3>
-                <p class='similarity-text'>${Math.round(100 * Number(sim)) + '% Match'}</p>
-                <progress max="100" value=${Math.round(100 * Number(sim))}></progress>
+
+                <div class='similarity-text'>
+                    <progress max="100" value=${Math.round(100 * Number(sim))}></progress>
+                    ${Math.round(100 * Number(sim)) + '% Match'}
+                </div>
+
+                <div class='feedback'>
+                    Is this article relevant to your search?
+                    <button onclick="sendFeedback(this)">Relevant</button>
+                    <button onclick="sendFeedback(this)">Irrelevant</button>
+                </div>
+
                 <div class='source-rating'>
                         <table class='rating-table' 
                         onclick="window.open(${link}, '_blank')" 
@@ -156,6 +167,38 @@
                 behavior: "smooth",
                 alignToTop: true
                 });
+        }
+
+        async function getSourceRating(source) {
+            const response = await fetch("/source?" + new URLSearchParams({ source: source }).toString());
+            const data = await response.json();
+
+            const rating = {
+                'link': data.url,
+                'source': data.news_source,
+                'rating': data.rating_num,
+                'agree': data.agree,
+                'total': data.agree + data.disagree
+            }
+
+            return rating
+        }
+
+        function sendFeedback(linkElem) {
+            feedbackElem = linkElem.parentElement;
+            articleBoxElem = feedbackElem.parentElement;
+            title = articleBoxElem.getElementsByClassName("article-title")[0].innerHTML;
+            relevant = linkElem.innerHTML == "Relevant";
+            query = document.getElementById("filter-text-val").value;
+            console.log(query);
+
+            fetch("/feedback?" + new URLSearchParams({ 
+                query: query,
+                title: title,
+                relevant: relevant
+            }).toString());
+
+            feedbackElem.innerHTML = "Thanks for the feedback!";
         }
 
     </script>
