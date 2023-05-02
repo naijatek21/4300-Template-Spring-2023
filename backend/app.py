@@ -7,6 +7,7 @@ import jaccard as jd
 import cossim as cos
 import cossim_new
 from sklearn.feature_extraction.text import TfidfVectorizer
+from helpers.keywords import getKeywords
 
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
@@ -42,8 +43,19 @@ def build_docs_dictionary():
         data_token = results_as_dict[i]["content"].lower()
         doc_dictionary[iterator] = data_token
         iterator+=1
-    return doc_dictionary
-
+    return 
+    
+def get_index_titles():
+    title_dict = {}
+    iterator = 0
+    query_sql = f"""SELECT content FROM mytable"""
+    data = mysql_engine.query_selector(query_sql)
+    results_as_dict = data.mappings().all()
+    for i in range(len(results_as_dict)): 
+        data_token = results_as_dict[i]["title"].lower()
+        title_dict[data_token] = iterator
+        iterator+=1
+    return 
 #Takes in the tuple array of top k searches from the similarity measure, and returns the top k titles of articles in an array 
 def top_titles_scores(top_k_searches): 
     title_score_arr = []
@@ -91,10 +103,14 @@ def search_cossim():
     text = request.args.get("text")
     docs_dictionary = build_docs_dictionary()
     index_titles = list(docs_dictionary.keys())
+    print(index_titles)
+    title_dict = get_index_titles()
+    print(len((list(title_dict.keys()))))
     vectorizer = TfidfVectorizer()
     article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
     query_tfidf = vectorizer.transform([text.lower()])
-    top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
+    adjusted_weight = cos.rocchio(text.lower(),len(index_titles))
+    top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf,index_titles,adjusted_weight)
     top = top_titles_scores(top_articles)
     return json_conversion(top)
     
@@ -104,7 +120,7 @@ def send_feedback():
     query = request.args.get("query")
     title = request.args.get("title")
     relevant = request.args.get("relevant")
-
-    cos.update_rocchio_dict(query, title, relevant == "true")
+    title_dict = get_index_titles()
+    cos.update_rocchio_dict(query, title, title_dict,relevant == "true")
 
     return json.dumps({}, default=json_serializer)
