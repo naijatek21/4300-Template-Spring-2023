@@ -97,8 +97,8 @@
 
                 <div class='feedback'>
                     Is this article relevant to your search?
-                    <button onclick="sendFeedback(this)">Relevant</button>
-                    <button onclick="sendFeedback(this)">Irrelevant</button>
+                    <button onclick="filterTextNew(this)">Relevant</button>
+                    <button onclick="filterTextNew(this)">Irrelevant</button>
                 </div>
 
                 <div class='source-rating'>
@@ -143,6 +143,7 @@
             const response = await fetch("/titles?" + new URLSearchParams({ text: text }).toString());
             return await response.json();
         }
+   
 
         async function makeAnswerBox(article, source) {
             let tempDiv = document.createElement("div")
@@ -160,6 +161,26 @@
             document.getElementById("show-after-submit").style.display = "block";
             document.getElementById("answer-box").innerHTML = ""
             data = await getArticles(document.getElementById("filter-text-val").value);
+            for (const row of data) {
+                await makeAnswerBox(row, row.publication);
+            }
+        }
+
+        async function filterTextNew(linkElem) {
+            document.getElementById("show-after-submit").style.display = "block";
+            document.getElementById("answer-box").innerHTML = ""
+            feedbackElem = linkElem.parentElement;
+            articleBoxElem = feedbackElem.parentElement;
+            title = articleBoxElem.getElementsByClassName("article-title")[0].innerHTML;
+            relevant = linkElem.innerHTML == "Relevant";
+            query = document.getElementById("filter-text-val").value;
+            const response = await fetch("/feedback?" + new URLSearchParams({ 
+                query: query,
+                title: title,
+                relevant: relevant
+            }).toString());
+            const stringResponse = await response.text()
+            data = await getArticles(stringResponse);
             for (const row of data) {
                 await makeAnswerBox(row, row.publication);
             }
@@ -189,22 +210,7 @@
             return rating
         }
 
-        function sendFeedback(linkElem) {
-            feedbackElem = linkElem.parentElement;
-            articleBoxElem = feedbackElem.parentElement;
-            title = articleBoxElem.getElementsByClassName("article-title")[0].innerHTML;
-            relevant = linkElem.innerHTML == "Relevant";
-            query = document.getElementById("filter-text-val").value;
-            console.log(query);
-
-            fetch("/feedback?" + new URLSearchParams({ 
-                query: query,
-                title: title,
-                relevant: relevant
-            }).toString());
-
-            feedbackElem.innerHTML = "Thanks for the feedback!";
-        }
+  
 
     </script>
 </body>
