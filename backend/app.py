@@ -104,7 +104,13 @@ def send_feedback():
     query = request.args.get("query")
     title = request.args.get("title")
     relevant = request.args.get("relevant")
-
-    cos.update_rocchio_dict(query, title, relevant == "true")
-
-    return json.dumps({}, default=json_serializer)
+    new_query = cossim_new.rocchio(query, title, relevant, 1, 1.5, 2, True)
+    docs_dictionary = build_docs_dictionary()
+    index_titles = list(docs_dictionary.keys())
+    vectorizer = TfidfVectorizer()
+    article_tfidf = vectorizer.fit_transform(docs_dictionary.values())
+    query_tfidf = vectorizer.transform([new_query.lower()])
+    top_articles = cossim_new.cosine_sim(query_tfidf, article_tfidf, index_titles)
+    top = top_titles_scores(top_articles)
+    print(top)
+    return json_conversion(top)
